@@ -1,0 +1,26 @@
+{
+  "name": "modern-calendar-picker",
+  "version": "0.0.5",
+  "description": "This is a module calendar picker made with Grid CSS & JS ES9, that replace input type date by HTML5 compatible in all browsers",
+  "main": "/gulpfile.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JorgeAntrax/modern-calendar-picker.git"
+  },
+  "keywords": [
+    "modern",
+    "calendar",
+    "picker",
+    "calendar",
+    "grid"
+  ],
+  "author": "Leonardo Quintana",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JorgeAntrax/modern-calendar-picker/issues"
+  },
+  "homepage": "https://github.com/JorgeAntrax/modern-calendar-picker#readme"
+}
