@@ -10,10 +10,22 @@
 </head>
 
 <body>
+    <h1>Modern Calendar Picker</h1>
+
+    <calendar id="myCalendar"></calendar>
+
     <script>
         import {
             Calendar
         } from '/build/calendar';
+
+        let calendar = new Calendar({
+            el: '#myCalendar',
+            language: 'es',
+            name: 'calendar1'
+        });
+
+        calendar.dev();
     </script>
 </body>
 
