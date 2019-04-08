@@ -1,0 +1,154 @@
+$prefix: '.mcp';
+$border-radius: 2px;
+$primary: #276ad4;
+calendar-picker:not([no-style]) {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    #{$prefix} {
+        &-input {
+            outline: none;
+            display: flex;
+            align-items: center;
+            align-content: center;
+            border: 1px solid whitesmoke;
+            background-color: whitesmoke;
+            width: 100%;
+            padding: 0.5rem 4rem 0.5rem 1rem;
+            font-size: inherit;
+            letter-spacing: 1px;
+            min-width: 300px;
+            max-width: 100%;
+            &[disabled] {
+                pointer-events: none !important;
+            }
+        }
+        &-calendar {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background-color: white;
+            border-radius: 0;
+            box-shadow: 0 10px 50px -10px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 5;
+            user-select: none;
+        }
+        &-calendar-header {
+            display: flex;
+            align-items: center;
+            align-content: center;
+            justify-content: space-between;
+            padding: 1rem;
+            strong {
+                background-color: whitesmoke;
+                padding: 0.25rem 0.5rem;
+                border-radius: $border-radius;
+                transition: background-color .2s ease;
+                text-transform: uppercase;
+                &:hover {
+                    background-color: darken(whitesmoke, 2%);
+                }
+            }
+            .previus,
+            .next {
+                position: relative;
+                width: 1.5rem;
+                height: 1.5rem;
+                cursor: pointer;
+                &:before {
+                    content: '';
+                    display: block;
+                    width: 40%;
+                    height: 40%;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    border: 1px solid #555;
+                    transform: translate(-50%, -50%) rotate(45deg);
+                    transition: border .2s ease;
+                    cursor: pointer;
+                }
+                &:hover::before {
+                    border-color: $primary;
+                }
+            }
+            .next:before {
+                border-left: 0;
+                border-bottom: 0;
+            }
+            .previus:before {
+                border-right: 0;
+                border-top: 0;
+            }
+        }
+        &-calendar-days,
+        &-calendar-grid {
+            padding: 0 1rem;
+        }
+        &-calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.25rem 0;
+                opacity: 0.5;
+                text-transform: uppercase;
+            }
+        }
+        &-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(5, 50px);
+            align-items: center;
+            justify-items: center;
+            &--btn {
+                display: flex;
+                align-items: center;
+                align-content: center;
+                justify-content: center;
+                border-radius: 100%;
+                width: 2rem;
+                height: 2rem;
+                cursor: pointer;
+                transition: all .2s ease;
+                &.active {
+                    background-color: $primary;
+                    color: white;
+                }
+                &:not(.active):hover {
+                    background-color: whitesmoke;
+                }
+            }
+        }
+        &-calendar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            button {
+                outline: none;
+                border: none;
+                display: inline-flex;
+                padding: 0.5rem 1rem;
+                background-color: white;
+                border-radius: $border-radius;
+                text-transform: uppercase;
+                &[save] {
+                    color: rgb(17, 195, 106);
+                }
+                &[cancel] {
+                    color: #ff0050;
+                }
+                &:hover {
+                    background-color: darken(whitesmoke, 2%);
+                }
+            }
+        }
+    }
+}

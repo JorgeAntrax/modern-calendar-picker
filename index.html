@@ -7,22 +7,37 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Calendar picker 2019</title>
     <link rel="stylesheet" href="/build/calendar.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+        }
+        
+        h1 {
+            margin-bottom: 3rem;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Modern Calendar Picker</h1>
 
-    <calendar id="myCalendar"></calendar>
+    <calendar-picker id="myCalendar"></calendar-picker>
 
+    <script src='/build/calendar.js'></script>
     <script>
-        import {
-            Calendar
-        } from '/build/calendar';
+        // import {Calendar} from 'src/calendar.js';
 
         let calendar = new Calendar({
             el: '#myCalendar',
-            language: 'es',
-            name: 'calendar1'
+            language: 'en',
+            name: 'calendar1',
+            prefix: 'mcp',
+            date: '01/08/2019'
         });
 
         calendar.dev();
