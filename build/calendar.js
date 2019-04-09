@@ -28,6 +28,7 @@ function () {
     this.date = new Date();
     this.initDate = date != null || date != undefined ? date.split('/') : null;
     this.calendarGrid = null;
+    this.inputID = "".concat(el.split('#').join(''), "-input");
 
     if (this.initDate != null && Array.isArray(this.initDate)) {
       this.setDay(this.initDate[0]);
@@ -39,7 +40,7 @@ function () {
       this.setYear(this.date.getFullYear());
     }
 
-    this.build();
+    this.build(this.inputID);
   }
 
   _createClass(Calendar, [{
@@ -63,12 +64,27 @@ function () {
     }
   }, {
     key: "build",
-    value: function build() {
+    value: function build(id) {
       this.setLanguage(this.language);
-      var $template = "\n\t\t\t\t<input type='text' class=\"".concat(this.prefix, "-input\" placeholder='01/05/2019' />\n\t\t\t\t<div class=\"").concat(this.prefix, "-calendar\">\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-header\">\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control previus\"></span>\n\t\t\t\t\t\t\t<strong>{{month}} {{year}}</strong>\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control next\"></span>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-days\">{{days}}</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-grid\">{{calendar-grid}}</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-actions\">\n\t\t\t\t\t\t\t<button cancel>").concat(this.cancelBtn, "</button>\n\t\t\t\t\t\t\t<button save>").concat(this.saveBtn, "</button>\n\t\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t");
+      var $template = "\n\t\t\t\t<input type='text' class=\"".concat(this.prefix, "-input\" id=\"").concat(id, "\" placeholder='01/05/2019'/>\n\t\t\t\t<div class=\"").concat(this.prefix, "-calendar\">\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-header\">\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control previus\"></span>\n\t\t\t\t\t\t\t<strong>{{month}} {{year}}</strong>\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control next\"></span>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-days\">{{days}}</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-grid\">{{calendar-grid}}</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-actions\">\n\t\t\t\t\t\t\t<button cancel>").concat(this.cancelBtn, "</button>\n\t\t\t\t\t\t\t<button save>").concat(this.saveBtn, "</button>\n\t\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t");
       $template = $template.replace(/\{\{days\}\}/g, this.getDays()).replace(/\{\{month\}\}/g, this.months[this.getMonth() - 1]).replace(/\{\{year\}\}/g, this.getYear()).replace(/\{\{calendar-grid\}\}/g, this.getCalendar()).replace('\t', '').replace('\n', '');
       this.el.innerHTML += $template;
       this.calendarGrid = this.el.querySelector(".".concat(this.prefix, "-calendar-grid"));
+      this.watchInput(id);
+    }
+  }, {
+    key: "watchInput",
+    value: function watchInput(id) {
+      var _this = this;
+
+      var $input = document.querySelector("#".concat(id));
+      console.log($input);
+      $input.addEventListener('focus', function (e) {
+        $input.nextElementSibling.classList.add("".concat(_this.prefix, "-show"));
+      }, false);
+      $input.addEventListener('blur', function (e) {
+        $input.nextElementSibling.classList.remove("".concat(_this.prefix, "-show"));
+      }, false);
     }
   }, {
     key: "getDays",

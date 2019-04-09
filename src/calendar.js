@@ -10,6 +10,8 @@ class Calendar {
         this.initDate = date != null || date != undefined ? date.split('/') : null;
         this.calendarGrid = null;
 
+        this.inputID = `${el.split('#').join('')}-input`;
+
         if (this.initDate != null && Array.isArray(this.initDate)) {
             this.setDay(this.initDate[0]);
             this.setMonth(this.initDate[1]);
@@ -20,7 +22,7 @@ class Calendar {
             this.setYear(this.date.getFullYear());
         }
 
-        this.build();
+        this.build(this.inputID);
     }
 
     setLanguage(language) {
@@ -40,11 +42,11 @@ class Calendar {
         }
     }
 
-    build() {
+    build(id) {
         this.setLanguage(this.language);
 
         let $template = `
-				<input type='text' class="${this.prefix}-input" placeholder='01/05/2019' />
+				<input type='text' class="${this.prefix}-input" id="${id}" placeholder='01/05/2019'/>
 				<div class="${this.prefix}-calendar">
 					<div class="${this.prefix}-calendar-header">
 							<span class="${this.prefix}-calendar-control previus"></span>
@@ -70,6 +72,20 @@ class Calendar {
 
         this.el.innerHTML += $template;
         this.calendarGrid = this.el.querySelector(`.${this.prefix}-calendar-grid`);
+
+        this.watchInput(id);
+    }
+
+    watchInput(id) {
+        const $input = document.querySelector(`#${id}`);
+        console.log($input);
+
+        $input.addEventListener('focus', e => {
+            $input.nextElementSibling.classList.add(`${this.prefix}-show`);
+        }, false);
+        $input.addEventListener('blur', e => {
+            $input.nextElementSibling.classList.remove(`${this.prefix}-show`);
+        }, false);
     }
 
     getDays() {

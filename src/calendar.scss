@@ -36,6 +36,11 @@ calendar-picker:not([no-style]) {
             left: 0;
             z-index: 5;
             user-select: none;
+            max-height: 0;
+            transition: max-height .2s ease-out;
+        }
+        &-show {
+            max-height: 500vh;
         }
         &-calendar-header {
             display: flex;
