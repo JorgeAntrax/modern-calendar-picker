@@ -1,11 +1,12 @@
 'use strict';
 class Calendar {
-    constructor({ el, language = 'es', name, prefix = 'mcp', date = null }) {
+    constructor({ el, language = 'es', name, prefix = 'mcp', date = null, rangeYears = 30 }) {
         this.el = document.querySelector(el);
         this.that = el.split('#').join('');
         this.language = language;
         this.name = name;
         this.prefix = prefix;
+        this.range = rangeYears;
         this.days = '';
         this.date = new Date();
         this.initDate = date != null || date != undefined ? date.split('/') : null;
@@ -15,6 +16,7 @@ class Calendar {
         this.iconClear = `${this.prefix}-${this.that}-clear`;
         this.inputId = `${this.prefix}-${this.that}-input`;
         this.toggleView = `${this.prefix}-${this.that}-toggle-view`;
+
 
         if (this.initDate != null && Array.isArray(this.initDate)) {
             this.setDay(this.initDate[0]);
@@ -33,17 +35,15 @@ class Calendar {
         switch (language) {
             case 'en':
                 this.days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-                this.months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                this.months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
                 this.cancelBtn = 'cancel';
                 this.saveBtn = 'save';
-                this.todayBtn = 'today';
                 break;
             default:
                 this.days = ['d', 'l', 'm', 'mi', 'j', 'v', 's'];
-                this.months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+                this.months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
                 this.cancelBtn = 'cancelar';
                 this.saveBtn = 'aceptar';
-                this.todayBtn = 'Hoy';
                 break;
         }
     }
@@ -55,7 +55,7 @@ class Calendar {
 				<span class="${this.prefix}-icon-clear hide" id="${this.iconClear}">
 					<span></span>
 				</span>
-				<input maxlength="10" type='text' class="${this.prefix}-input" id="${input}" placeholder='01/05/2019'/>
+				<input maxlength="10" type='text' class="${this.prefix}-input" id="${input}" placeholder='${this.getDay() < 10 ? '0'+this.getDay() : this.getDay()}/${this.getMonth() < 10 ? '0'+this.getMonth() : this.getMonth()}/${this.getYear()}'/>
 				<span id="${this.iconToggle}" class="${this.prefix}-icon-get-date-now">
 					<span></span>
 				</span>
@@ -64,19 +64,19 @@ class Calendar {
 							<span class="${this.prefix}-calendar-control previus"></span>
 							<strong id="${this.toggleView}">
 								<span class="toggleMonth">{{month}}</span>
+								<span class="toggleDay">{{day}}</span>
 								<span class="toggleYear">{{year}}</span>
 							</strong>
 							<span class="${this.prefix}-calendar-control next"></span>
 					</div>
 					<div class="${this.prefix}-calendar-days">{{days}}</div>
 					<div class="${this.prefix}-calendar-grid viewMonth">
-						<div class="viewCalendar ${this.prefix}-calendar-grid__view-months">{{months}}</div>
+						<div class="viewCalendar ${this.prefix}-calendar-grid__view-months">{{calendar-months}}</div>
 						<div class="viewCalendar ${this.prefix}-calendar-grid__view-month">{{calendar-grid}}</div>
 						<div class="viewCalendar ${this.prefix}-calendar-grid__view-years">{{calendar-years}}</div>
 					</div>
 					<div class="${this.prefix}-calendar-actions">
 							<button cancel>${this.cancelBtn}</button>
-							<button today>${this.todayBtn}</button>
 							<button save>${this.saveBtn}</button>
 					</div>
 			</div>
@@ -86,13 +86,19 @@ class Calendar {
         replace(/\{\{days\}\}/g, this.getDays()).
         replace(/\{\{month\}\}/g, this.months[this.getMonth() - 1]).
         replace(/\{\{year\}\}/g, this.getYear()).
+        replace(/\{\{day\}\}/g, this.getDay() < 10 ? `0${this.getDay()}` : this.getDay()).
         replace(/\{\{calendar-years\}\}/g, this.getYears()).
+        replace(/\{\{calendar-months\}\}/g, this.getMonths()).
         replace(/\{\{calendar-grid\}\}/g, this.getCalendar()).
         replace('\t', '').
         replace('\n', '');
 
         this.el.innerHTML += $template;
         this.calendarGrid = this.el.querySelector(`.${this.prefix}-calendar-grid`);
+
+        let $__viewYear = this.el.querySelector(`[data-year="${this.getYear()}"]`)
+        let $__top = $__viewYear.offsetTop;
+        $__viewYear.parentElement.scrollTop = $__top - 100;
 
         this.watchCalendar(parent, input);
         this.watchToggleView(this.toggleView, parent);
@@ -131,8 +137,11 @@ class Calendar {
 
 
             if ($_that.classList.contains('toggleMonth')) {
-                this.removeClass(['viewMonths', 'viewYear'], $__viewContainer);
+                this.removeClass(['viewMonth', 'viewYear'], $__viewContainer);
                 $__viewContainer.classList.add('viewMonths');
+            } else if ($_that.classList.contains('toggleDay')) {
+                this.removeClass(['viewMonths', 'viewYear'], $__viewContainer);
+                $__viewContainer.classList.add('viewMonth');
             } else {
                 this.removeClass(['viewMonths', 'viewMonth'], $__viewContainer);
                 $__viewContainer.classList.add('viewYear');
@@ -239,8 +248,8 @@ class Calendar {
     getYears() {
         let $_template = '';
         let $_current = this.getYear();
-        let $t = $_current - 50;
-        let $tLimit = $t + 100;
+        let $t = $_current - this.getPrintYears();
+        let $tLimit = $t + (this.getPrintYears() * 2);
 
         for (let i = $t; i < $tLimit; i++) {
 
@@ -248,6 +257,10 @@ class Calendar {
 
         }
         return $_template;
+    }
+
+    getPrintYears() {
+        return this.range;
     }
 
     getCalendar() {
@@ -308,6 +321,19 @@ class Calendar {
         } else {
             return 30;
         }
+    }
+
+    getMonths() {
+        let $_template = '';
+        let $_current = this.getMonth();
+        let $tLimit = this.months.length;
+
+        for (let i = 0; i < $tLimit; i++) {
+
+            $_template += `<span data-month="${i}" ${$_current == i ? 'class="active"': ''}>${this.months[i].toLowerCase()}</span>`;
+
+        }
+        return $_template;
     }
 
     removeClass(classes, el) {

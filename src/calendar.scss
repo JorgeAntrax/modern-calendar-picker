@@ -113,15 +113,19 @@
                 justify-content: space-between;
                 padding: 1rem;
                 strong {
+                    display: flex;
+                    width: 60%;
                     span {
                         cursor: pointer;
-                        background-color: whitesmoke;
                         padding: 0.25rem 0.5rem;
                         border-radius: $border-radius;
                         transition: background-color .2s ease;
                         text-transform: uppercase;
+                        text-align: center;
+                        flex: 1;
+                        &.active,
                         &:hover {
-                            background-color: darken(whitesmoke, 2%);
+                            color: $primary;
                         }
                     }
                 }
@@ -169,6 +173,7 @@
                     justify-content: center;
                     padding: 0.25rem 0;
                     opacity: 0.5;
+                    font-size: 85%;
                     text-transform: uppercase;
                 }
             }
@@ -192,6 +197,7 @@
                     padding: 0 1rem;
                 }
                 &__view-month,
+                &__view-months,
                 &__view-years {
                     display: grid;
                     width: 100%;
@@ -200,7 +206,8 @@
                     align-items: center;
                     justify-items: center;
                 }
-                &__view-years {
+                &__view-years,
+                &__view-months {
                     grid-template-columns: repeat(4, 1fr);
                     grid-auto-rows: 50px;
                     overflow-y: auto;
@@ -211,7 +218,7 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        padding: 0.25rem 0.5rem;
+                        padding: 0.25rem 1rem;
                         border-radius: 2rem;
                         cursor: pointer;
                         transition: all .2s ease;
@@ -246,24 +253,27 @@
             &-calendar-actions {
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
-                padding: 1rem;
+                padding: 0 1rem;
                 button {
                     outline: none;
                     border: none;
-                    display: inline-flex;
-                    padding: 0.5rem 1rem;
+                    display: flex;
+                    padding: 1rem;
                     background-color: white;
                     border-radius: $border-radius;
                     text-transform: uppercase;
+                    text-align: center;
+                    justify-content: center;
+                    flex: 1;
                     &[save] {
-                        color: rgb(17, 195, 106);
+                        &:hover {
+                            color: $primary;
+                        }
                     }
                     &[cancel] {
-                        color: #ff0050;
-                    }
-                    &:hover {
-                        background-color: darken(whitesmoke, 2%);
+                        &:hover {
+                            color: #ff0050;
+                        }
                     }
                 }
             }

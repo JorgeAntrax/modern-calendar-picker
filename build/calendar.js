@@ -17,7 +17,9 @@ function () {
         _ref$prefix = _ref.prefix,
         prefix = _ref$prefix === void 0 ? 'mcp' : _ref$prefix,
         _ref$date = _ref.date,
-        date = _ref$date === void 0 ? null : _ref$date;
+        date = _ref$date === void 0 ? null : _ref$date,
+        _ref$rangeYears = _ref.rangeYears,
+        rangeYears = _ref$rangeYears === void 0 ? 30 : _ref$rangeYears;
 
     _classCallCheck(this, Calendar);
 
@@ -26,6 +28,7 @@ function () {
     this.language = language;
     this.name = name;
     this.prefix = prefix;
+    this.range = rangeYears;
     this.days = '';
     this.date = new Date();
     this.initDate = date != null || date != undefined ? date.split('/') : null;
@@ -54,18 +57,16 @@ function () {
       switch (language) {
         case 'en':
           this.days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-          this.months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+          this.months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
           this.cancelBtn = 'cancel';
           this.saveBtn = 'save';
-          this.todayBtn = 'today';
           break;
 
         default:
           this.days = ['d', 'l', 'm', 'mi', 'j', 'v', 's'];
-          this.months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+          this.months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
           this.cancelBtn = 'cancelar';
           this.saveBtn = 'aceptar';
-          this.todayBtn = 'Hoy';
           break;
       }
     }
@@ -73,10 +74,13 @@ function () {
     key: "build",
     value: function build(id, input, parent) {
       this.setLanguage(this.language);
-      var $template = "\n\t\t\t\t<span class=\"".concat(this.prefix, "-icon-clear hide\" id=\"").concat(this.iconClear, "\">\n\t\t\t\t\t<span></span>\n\t\t\t\t</span>\n\t\t\t\t<input maxlength=\"10\" type='text' class=\"").concat(this.prefix, "-input\" id=\"").concat(input, "\" placeholder='01/05/2019'/>\n\t\t\t\t<span id=\"").concat(this.iconToggle, "\" class=\"").concat(this.prefix, "-icon-get-date-now\">\n\t\t\t\t\t<span></span>\n\t\t\t\t</span>\n\t\t\t\t<div class=\"").concat(this.prefix, "-calendar\">\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-header\">\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control previus\"></span>\n\t\t\t\t\t\t\t<strong id=\"").concat(this.toggleView, "\">\n\t\t\t\t\t\t\t\t<span class=\"toggleMonth\">{{month}}</span>\n\t\t\t\t\t\t\t\t<span class=\"toggleYear\">{{year}}</span>\n\t\t\t\t\t\t\t</strong>\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control next\"></span>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-days\">{{days}}</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-grid viewMonth\">\n\t\t\t\t\t\t<div class=\"viewCalendar ").concat(this.prefix, "-calendar-grid__view-months\">{{months}}</div>\n\t\t\t\t\t\t<div class=\"viewCalendar ").concat(this.prefix, "-calendar-grid__view-month\">{{calendar-grid}}</div>\n\t\t\t\t\t\t<div class=\"viewCalendar ").concat(this.prefix, "-calendar-grid__view-years\">{{calendar-years}}</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-actions\">\n\t\t\t\t\t\t\t<button cancel>").concat(this.cancelBtn, "</button>\n\t\t\t\t\t\t\t<button today>").concat(this.todayBtn, "</button>\n\t\t\t\t\t\t\t<button save>").concat(this.saveBtn, "</button>\n\t\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t");
-      $template = $template.replace(/\{\{days\}\}/g, this.getDays()).replace(/\{\{month\}\}/g, this.months[this.getMonth() - 1]).replace(/\{\{year\}\}/g, this.getYear()).replace(/\{\{calendar-years\}\}/g, this.getYears()).replace(/\{\{calendar-grid\}\}/g, this.getCalendar()).replace('\t', '').replace('\n', '');
+      var $template = "\n\t\t\t\t<span class=\"".concat(this.prefix, "-icon-clear hide\" id=\"").concat(this.iconClear, "\">\n\t\t\t\t\t<span></span>\n\t\t\t\t</span>\n\t\t\t\t<input maxlength=\"10\" type='text' class=\"").concat(this.prefix, "-input\" id=\"").concat(input, "\" placeholder='").concat(this.getDay() < 10 ? '0' + this.getDay() : this.getDay(), "/").concat(this.getMonth() < 10 ? '0' + this.getMonth() : this.getMonth(), "/").concat(this.getYear(), "'/>\n\t\t\t\t<span id=\"").concat(this.iconToggle, "\" class=\"").concat(this.prefix, "-icon-get-date-now\">\n\t\t\t\t\t<span></span>\n\t\t\t\t</span>\n\t\t\t\t<div class=\"").concat(this.prefix, "-calendar\">\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-header\">\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control previus\"></span>\n\t\t\t\t\t\t\t<strong id=\"").concat(this.toggleView, "\">\n\t\t\t\t\t\t\t\t<span class=\"toggleMonth\">{{month}}</span>\n\t\t\t\t\t\t\t\t<span class=\"toggleDay\">{{day}}</span>\n\t\t\t\t\t\t\t\t<span class=\"toggleYear\">{{year}}</span>\n\t\t\t\t\t\t\t</strong>\n\t\t\t\t\t\t\t<span class=\"").concat(this.prefix, "-calendar-control next\"></span>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-days\">{{days}}</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-grid viewMonth\">\n\t\t\t\t\t\t<div class=\"viewCalendar ").concat(this.prefix, "-calendar-grid__view-months\">{{calendar-months}}</div>\n\t\t\t\t\t\t<div class=\"viewCalendar ").concat(this.prefix, "-calendar-grid__view-month\">{{calendar-grid}}</div>\n\t\t\t\t\t\t<div class=\"viewCalendar ").concat(this.prefix, "-calendar-grid__view-years\">{{calendar-years}}</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"").concat(this.prefix, "-calendar-actions\">\n\t\t\t\t\t\t\t<button cancel>").concat(this.cancelBtn, "</button>\n\t\t\t\t\t\t\t<button save>").concat(this.saveBtn, "</button>\n\t\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t");
+      $template = $template.replace(/\{\{days\}\}/g, this.getDays()).replace(/\{\{month\}\}/g, this.months[this.getMonth() - 1]).replace(/\{\{year\}\}/g, this.getYear()).replace(/\{\{day\}\}/g, this.getDay() < 10 ? "0".concat(this.getDay()) : this.getDay()).replace(/\{\{calendar-years\}\}/g, this.getYears()).replace(/\{\{calendar-months\}\}/g, this.getMonths()).replace(/\{\{calendar-grid\}\}/g, this.getCalendar()).replace('\t', '').replace('\n', '');
       this.el.innerHTML += $template;
       this.calendarGrid = this.el.querySelector(".".concat(this.prefix, "-calendar-grid"));
+      var $__viewYear = this.el.querySelector("[data-year=\"".concat(this.getYear(), "\"]"));
+      var $__top = $__viewYear.offsetTop;
+      $__viewYear.parentElement.scrollTop = $__top - 100;
       this.watchCalendar(parent, input);
       this.watchToggleView(this.toggleView, parent);
       this.watchClear(this.iconClear, parent, input);
@@ -119,9 +123,13 @@ function () {
         var $_that = e.target;
 
         if ($_that.classList.contains('toggleMonth')) {
-          _this2.removeClass(['viewMonths', 'viewYear'], $__viewContainer);
+          _this2.removeClass(['viewMonth', 'viewYear'], $__viewContainer);
 
           $__viewContainer.classList.add('viewMonths');
+        } else if ($_that.classList.contains('toggleDay')) {
+          _this2.removeClass(['viewMonths', 'viewYear'], $__viewContainer);
+
+          $__viewContainer.classList.add('viewMonth');
         } else {
           _this2.removeClass(['viewMonths', 'viewMonth'], $__viewContainer);
 
@@ -241,14 +249,19 @@ function () {
     value: function getYears() {
       var $_template = '';
       var $_current = this.getYear();
-      var $t = $_current - 50;
-      var $tLimit = $t + 100;
+      var $t = $_current - this.getPrintYears();
+      var $tLimit = $t + this.getPrintYears() * 2;
 
       for (var i = $t; i < $tLimit; i++) {
         $_template += "<span data-year=\"".concat(i, "\" ").concat($_current == i ? 'class="active"' : '', ">").concat(i, "</span>");
       }
 
       return $_template;
+    }
+  }, {
+    key: "getPrintYears",
+    value: function getPrintYears() {
+      return this.range;
     }
   }, {
     key: "getCalendar",
@@ -320,6 +333,19 @@ function () {
       } else {
         return 30;
       }
+    }
+  }, {
+    key: "getMonths",
+    value: function getMonths() {
+      var $_template = '';
+      var $_current = this.getMonth();
+      var $tLimit = this.months.length;
+
+      for (var i = 0; i < $tLimit; i++) {
+        $_template += "<span data-month=\"".concat(i, "\" ").concat($_current == i ? 'class="active"' : '', ">").concat(this.months[i].toLowerCase(), "</span>");
+      }
+
+      return $_template;
     }
   }, {
     key: "removeClass",
