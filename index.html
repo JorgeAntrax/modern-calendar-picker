@@ -29,6 +29,12 @@
 
     <calendar-picker id="myCalendar"></calendar-picker>
 
+    <br>
+    <br>
+    <br>
+    <br>
+    <calendar-picker id="myCalendar2"></calendar-picker>
+
     <script src='build/calendar.js'></script>
     <script>
         // import {Calendar} from 'src/calendar.js';
@@ -36,9 +42,12 @@
         let calendar = new Calendar({
             el: '#myCalendar',
             language: 'en',
-            name: 'calendar1',
-            prefix: 'mcp',
-            date: '01/08/2015'
+            name: 'calendar1'
+        });
+        let calendar2 = new Calendar({
+            el: '#myCalendar2',
+            language: 'es',
+            name: 'calendar2'
         });
     </script>
 </body>

@@ -82,6 +82,8 @@ function () {
       var $__top = $__viewYear.offsetTop;
       $__viewYear.parentElement.scrollTop = $__top - 100;
       this.watchCalendar(parent, input);
+      this.watchMonth(parent, input);
+      this.watchYear(parent, input);
       this.watchToggleView(this.toggleView, parent);
       this.watchClear(this.iconClear, parent, input);
       this.watchToggle(id, parent);
@@ -89,25 +91,84 @@ function () {
       this.updateInput(id);
     }
   }, {
-    key: "watchCalendar",
-    value: function watchCalendar(parent, input) {
+    key: "watchMonth",
+    value: function watchMonth(parent, id) {
       var _this = this;
 
+      var $__months = parent.querySelectorAll('[data-month]');
+      var $__label = parent.querySelector('.toggleMonth');
+      $__months.forEach(function ($m) {
+        $m.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var $that = e.target;
+
+          _this.removeClassSiblings($__months, $__months.length);
+
+          $that.classList.add('active');
+
+          _this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
+
+          $that.parentElement.parentNode.classList.add('viewMonth');
+
+          _this.setMonth($that.getAttribute('data-month'));
+
+          $__label.innerHTML = _this.months[_this.getMonth() - 1];
+
+          _this.updateInput(id);
+        }, false);
+      });
+    }
+  }, {
+    key: "watchYear",
+    value: function watchYear(parent, id) {
+      var _this2 = this;
+
+      var $__years = parent.querySelectorAll('[data-year]');
+      var $__label = parent.querySelector('.toggleYear');
+      $__years.forEach(function ($m) {
+        $m.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var $that = e.target;
+
+          _this2.removeClassSiblings($__years, $__years.length);
+
+          $that.classList.add('active');
+
+          _this2.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
+
+          $that.parentElement.parentNode.classList.add('viewMonth');
+
+          _this2.setYear($that.getAttribute('data-year'));
+
+          $__label.innerHTML = _this2.getYear();
+
+          _this2.updateInput(id);
+        }, false);
+      });
+    }
+  }, {
+    key: "watchCalendar",
+    value: function watchCalendar(parent, input) {
+      var _this3 = this;
+
       var $_days = parent.querySelectorAll(".".concat(this.prefix, "-calendar-grid__btn"));
+      var $__label = parent.querySelector('.toggleDay');
       var $_in = $_days.length;
 
       for (var i = 0; i < $_in; i++) {
         var el = $_days[i];
         el.addEventListener('click', function (e) {
+          e.stopPropagation();
           var $__btn = e.target;
           var $__currentDay = $__btn.getAttribute('day');
 
-          _this.setDay($__currentDay);
+          _this3.setDay($__currentDay);
 
-          _this.updateInput(input);
+          _this3.updateInput(input);
 
-          _this.removeClassSiblings($_days, $_in);
+          _this3.removeClassSiblings($_days, $_in);
 
+          $__label.innerHTML = _this3.getDay() < 10 ? "0".concat(_this3.getDay()) : _this3.getDay();
           $__btn.classList.add('active');
         }, false);
       }
@@ -115,23 +176,24 @@ function () {
   }, {
     key: "watchToggleView",
     value: function watchToggleView(view, parent) {
-      var _this2 = this;
+      var _this4 = this;
 
       var $__view = parent.querySelector("#".concat(view));
       var $__viewContainer = parent.querySelector(".".concat(this.prefix, "-calendar-grid"));
       $__view.addEventListener('click', function (e) {
+        e.stopPropagation();
         var $_that = e.target;
 
         if ($_that.classList.contains('toggleMonth')) {
-          _this2.removeClass(['viewMonth', 'viewYear'], $__viewContainer);
+          _this4.removeClass(['viewMonth', 'viewYear'], $__viewContainer);
 
           $__viewContainer.classList.add('viewMonths');
         } else if ($_that.classList.contains('toggleDay')) {
-          _this2.removeClass(['viewMonths', 'viewYear'], $__viewContainer);
+          _this4.removeClass(['viewMonths', 'viewYear'], $__viewContainer);
 
           $__viewContainer.classList.add('viewMonth');
         } else {
-          _this2.removeClass(['viewMonths', 'viewMonth'], $__viewContainer);
+          _this4.removeClass(['viewMonths', 'viewMonth'], $__viewContainer);
 
           $__viewContainer.classList.add('viewYear');
         }
@@ -151,18 +213,18 @@ function () {
   }, {
     key: "watchClear",
     value: function watchClear(id, parent, input) {
-      var _this3 = this;
+      var _this5 = this;
 
       var $__clear = parent.querySelector("#".concat(id));
       var $input = parent.querySelector("#".concat(input));
       $__clear.addEventListener('click', function (e) {
-        _this3.setDay(1);
+        _this5.setDay(1);
 
-        _this3.setMonth(1);
+        _this5.setMonth(1);
 
-        _this3.setYear(1);
+        _this5.setYear(1);
 
-        _this3.updateInput(input);
+        _this5.updateInput(input);
 
         e.target.classList.add('hide');
       }, false);
@@ -170,20 +232,34 @@ function () {
   }, {
     key: "watchToggle",
     value: function watchToggle(id, parent) {
-      var _this4 = this;
+      var _this6 = this;
 
       var $toggle = parent.querySelector("#".concat(id));
       console.log($toggle);
       $toggle.addEventListener('click', function (e) {
-        $toggle.nextElementSibling.classList.toggle("".concat(_this4.prefix, "-show"));
+        e.stopPropagation();
+        $toggle.nextElementSibling.classList.toggle("".concat(_this6.prefix, "-show"));
+
+        _this6.destroy($toggle);
       }, false); // $toggle.addEventListener('blur', e => {
       //     $toggle.nextElementSibling.classList.remove(`${this.prefix}-show`);
       // }, false);
     }
   }, {
+    key: "destroy",
+    value: function destroy(el) {
+      var _this7 = this;
+
+      document.body.addEventListener('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        el.nextElementSibling.classList.remove("".concat(_this7.prefix, "-show")); // this.removeEventListener('click', this, false);
+      }, false);
+    }
+  }, {
     key: "watchInput",
     value: function watchInput(id, parent, clear) {
-      var _this5 = this;
+      var _this8 = this;
 
       var $input = parent.querySelector("#".concat(id));
       var $_keyUp = 0;
@@ -205,11 +281,11 @@ function () {
         if ($_keyUp == 10) {
           var $__newDate = $__this.value.split('/');
 
-          _this5.setDay($__newDate[0]);
+          _this8.setDay($__newDate[0]);
 
-          _this5.setMonth($__newDate[1]);
+          _this8.setMonth($__newDate[1]);
 
-          _this5.setYear($__newDate[2]);
+          _this8.setYear($__newDate[2]);
 
           $_keyUp = 0;
         }
@@ -342,7 +418,7 @@ function () {
       var $tLimit = this.months.length;
 
       for (var i = 0; i < $tLimit; i++) {
-        $_template += "<span data-month=\"".concat(i, "\" ").concat($_current == i ? 'class="active"' : '', ">").concat(this.months[i].toLowerCase(), "</span>");
+        $_template += "<span data-month=\"".concat(i + 1, "\" ").concat($_current == i ? 'class="active"' : '', ">").concat(this.months[i].toLowerCase(), "</span>");
       }
 
       return $_template;

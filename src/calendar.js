@@ -101,6 +101,8 @@ class Calendar {
         $__viewYear.parentElement.scrollTop = $__top - 100;
 
         this.watchCalendar(parent, input);
+        this.watchMonth(parent, input);
+        this.watchYear(parent, input);
         this.watchToggleView(this.toggleView, parent);
         this.watchClear(this.iconClear, parent, input);
         this.watchToggle(id, parent);
@@ -108,20 +110,63 @@ class Calendar {
         this.updateInput(id);
     }
 
+    watchMonth(parent, id) {
+        let $__months = parent.querySelectorAll('[data-month]');
+        let $__label = parent.querySelector('.toggleMonth');
+
+        $__months.forEach($m => {
+            $m.addEventListener('click', e => {
+                e.stopPropagation();
+                let $that = e.target;
+                this.removeClassSiblings($__months, $__months.length);
+                $that.classList.add('active');
+                this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
+                $that.parentElement.parentNode.classList.add('viewMonth');
+                this.setMonth($that.getAttribute('data-month'));
+                $__label.innerHTML = this.months[this.getMonth() - 1];
+
+                this.updateInput(id);
+            }, false);
+        });
+    }
+
+    watchYear(parent, id) {
+        let $__years = parent.querySelectorAll('[data-year]');
+        let $__label = parent.querySelector('.toggleYear');
+
+        $__years.forEach($m => {
+            $m.addEventListener('click', e => {
+                e.stopPropagation();
+                let $that = e.target;
+                this.removeClassSiblings($__years, $__years.length);
+
+                $that.classList.add('active');
+                this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
+                $that.parentElement.parentNode.classList.add('viewMonth');
+                this.setYear($that.getAttribute('data-year'));
+                $__label.innerHTML = this.getYear();
+                this.updateInput(id);
+            }, false);
+        });
+    }
+
     watchCalendar(parent, input) {
         let $_days = parent.querySelectorAll(`.${this.prefix}-calendar-grid__btn`);
+        let $__label = parent.querySelector('.toggleDay');
         let $_in = $_days.length;
 
         for (let i = 0; i < $_in; i++) {
             const el = $_days[i];
 
             el.addEventListener('click', e => {
+                e.stopPropagation();
                 const $__btn = e.target;
                 const $__currentDay = $__btn.getAttribute('day');
                 this.setDay($__currentDay);
                 this.updateInput(input);
 
                 this.removeClassSiblings($_days, $_in);
+                $__label.innerHTML = this.getDay() < 10 ? `0${this.getDay()}` : this.getDay();
 
                 $__btn.classList.add('active');
             }, false);
@@ -133,6 +178,7 @@ class Calendar {
         let $__viewContainer = parent.querySelector(`.${this.prefix}-calendar-grid`);
 
         $__view.addEventListener('click', e => {
+            e.stopPropagation();
             const $_that = e.target;
 
 
@@ -178,11 +224,23 @@ class Calendar {
         console.log($toggle);
 
         $toggle.addEventListener('click', e => {
+            e.stopPropagation();
             $toggle.nextElementSibling.classList.toggle(`${this.prefix}-show`);
+
+            this.destroy($toggle);
         }, false);
         // $toggle.addEventListener('blur', e => {
         //     $toggle.nextElementSibling.classList.remove(`${this.prefix}-show`);
         // }, false);
+    }
+
+    destroy(el) {
+        document.body.addEventListener('click', e => {
+            e.stopPropagation();
+            e.preventDefault();
+            el.nextElementSibling.classList.remove(`${this.prefix}-show`);
+            // this.removeEventListener('click', this, false);
+        }, false);
     }
 
     watchInput(id, parent, clear) {
@@ -330,7 +388,7 @@ class Calendar {
 
         for (let i = 0; i < $tLimit; i++) {
 
-            $_template += `<span data-month="${i}" ${$_current == i ? 'class="active"': ''}>${this.months[i].toLowerCase()}</span>`;
+            $_template += `<span data-month="${i+1}" ${$_current == i ? 'class="active"': ''}>${this.months[i].toLowerCase()}</span>`;
 
         }
         return $_template;
