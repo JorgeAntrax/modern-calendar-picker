@@ -1,13 +1,17 @@
 'use strict';
 class Calendar {
-    constructor({ el, language = 'es', name, prefix = 'mcp', date = null, rangeYears = 30 }) {
+    constructor({ el, language = 'es', name, prefix = 'mcp', date = null, rangeYears = 30, available = 'all', separator = '/', styleInput = '', call = null }) {
         this.el = document.querySelector(el);
         this.that = el.split('#').join('');
         this.language = language;
         this.name = name;
         this.prefix = prefix;
         this.range = rangeYears;
+        this.inputClasses = styleInput;
         this.days = '';
+        this.call = call;
+        this.separator = separator;
+        this.available = available;
         this.date = new Date();
         this.initDate = date != null || date != undefined ? date.split('/') : null;
         this.calendarGrid = null;
@@ -28,7 +32,7 @@ class Calendar {
             this.setYear(this.date.getFullYear());
         }
 
-        this.build(this.iconToggle, this.inputId, this.el);
+        this.build(this.iconToggle, this.inputId, this.el, this.call);
     }
 
     setLanguage(language) {
@@ -48,14 +52,14 @@ class Calendar {
         }
     }
 
-    build(id, input, parent) {
+    build(id, input, parent, callback) {
         this.setLanguage(this.language);
 
         let $template = `
 				<span class="${this.prefix}-icon-clear hide" id="${this.iconClear}">
 					<span></span>
 				</span>
-				<input maxlength="10" type='text' class="${this.prefix}-input" id="${input}" placeholder='${this.getDay() < 10 ? '0'+this.getDay() : this.getDay()}/${this.getMonth() < 10 ? '0'+this.getMonth() : this.getMonth()}/${this.getYear()}'/>
+				<input maxlength="10" type='text' class="${this.prefix}-input ${this.inputClasses}" id="${input}" placeholder='${this.getDay() < 10 ? '0'+this.getDay() : this.getDay()}${this.separator}${this.getMonth() < 10 ? '0'+this.getMonth() : this.getMonth()}${this.separator}${this.getYear()}'/>
 				<span id="${this.iconToggle}" class="${this.prefix}-icon-get-date-now">
 					<span></span>
 				</span>
@@ -89,7 +93,7 @@ class Calendar {
         replace(/\{\{day\}\}/g, this.getDay() < 10 ? `0${this.getDay()}` : this.getDay()).
         replace(/\{\{calendar-years\}\}/g, this.getYears()).
         replace(/\{\{calendar-months\}\}/g, this.getMonths()).
-        replace(/\{\{calendar-grid\}\}/g, this.getCalendar()).
+        replace(/\{\{calendar-grid\}\}/g, this.getCalendar(this.getMonth()-1)).
         replace('\t', '').
         replace('\n', '');
 
@@ -100,7 +104,7 @@ class Calendar {
         let $__top = $__viewYear.offsetTop;
         $__viewYear.parentElement.scrollTop = $__top - 100;
 
-        this.watchCalendar(parent, input);
+        this.watchCalendar(parent, input, callback);
         this.watchMonth(parent, input);
         this.watchYear(parent, input);
         this.watchToggleView(this.toggleView, parent);
@@ -111,66 +115,75 @@ class Calendar {
     }
 
     watchMonth(parent, id) {
-        let $__months = parent.querySelectorAll('[data-month]');
+        let $__months = parent.querySelectorAll('[data-month]:not([disabled])');
         let $__label = parent.querySelector('.toggleMonth');
+        let $__replace = parent.querySelector(`.${this.prefix}-calendar-grid__view-month`);
 
-        $__months.forEach($m => {
-            $m.addEventListener('click', e => {
+            parent.addEventListener('click', e => {
                 e.stopPropagation();
                 let $that = e.target;
-                this.removeClassSiblings($__months, $__months.length);
-                $that.classList.add('active');
-                this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
-                $that.parentElement.parentNode.classList.add('viewMonth');
-                this.setMonth($that.getAttribute('data-month'));
-                $__label.innerHTML = this.months[this.getMonth() - 1];
 
-                this.updateInput(id);
+                if(e.target.hasAttribute('data-month')) {
+                    this.removeClassSiblings($__months, $__months.length);
+                    $that.classList.add('active');
+                    this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
+                    $that.parentElement.parentNode.classList.add('viewMonth');
+                    this.setMonth($that.getAttribute('data-month'));
+                    $__label.innerHTML = this.months[this.getMonth() - 1];
+    
+                    $__replace.innerHTML = this.getCalendar($that.getAttribute('data-month')-1);
+    
+                    this.updateInput(id);
+                }
             }, false);
-        });
     }
 
     watchYear(parent, id) {
-        let $__years = parent.querySelectorAll('[data-year]');
+        let $__years = parent.querySelectorAll('[data-year]:not([disabled])');
         let $__label = parent.querySelector('.toggleYear');
+        let $__replace = parent.querySelector(`.${this.prefix}-calendar-grid__view-month`);
 
-        $__years.forEach($m => {
-            $m.addEventListener('click', e => {
-                e.stopPropagation();
-                let $that = e.target;
+        parent.addEventListener('click', e => {
+            e.stopPropagation();
+            let $that = e.target;
+            if(e.target.hasAttribute('data-year')) {
                 this.removeClassSiblings($__years, $__years.length);
-
+    
                 $that.classList.add('active');
                 this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
                 $that.parentElement.parentNode.classList.add('viewMonth');
                 this.setYear($that.getAttribute('data-year'));
                 $__label.innerHTML = this.getYear();
                 this.updateInput(id);
-            }, false);
-        });
+                $__replace.innerHTML = this.getCalendar(this.getMonth()-1);
+            }
+        }, false);
     }
 
-    watchCalendar(parent, input) {
-        let $_days = parent.querySelectorAll(`.${this.prefix}-calendar-grid__btn`);
+    watchCalendar(parent, input, callback) {
+        let $_days = parent.querySelectorAll(`.${this.prefix}-calendar-grid__btn:not([disabled])`);
         let $__label = parent.querySelector('.toggleDay');
         let $_in = $_days.length;
 
-        for (let i = 0; i < $_in; i++) {
-            const el = $_days[i];
+        parent.addEventListener('click', e => {
+            e.stopPropagation();
+            const $__btn = e.target;
 
-            el.addEventListener('click', e => {
-                e.stopPropagation();
-                const $__btn = e.target;
+            if(e.target.hasAttribute('day')) {
                 const $__currentDay = $__btn.getAttribute('day');
                 this.setDay($__currentDay);
                 this.updateInput(input);
-
+    
                 this.removeClassSiblings($_days, $_in);
-                $__label.innerHTML = this.getDay() < 10 ? `0${this.getDay()}` : this.getDay();
-
+                $__label.innerHTML = this.getDay()-1 < 10 ? `0${this.getDay()-1}` : this.getDay()-1;
+    
                 $__btn.classList.add('active');
-            }, false);
-        }
+
+                if(callback !== null) {
+                    callback.call(this);
+                }
+            }
+        }, false);
     }
 
     watchToggleView(view, parent) {
@@ -258,12 +271,12 @@ class Calendar {
             }
 
             if ($__cont == 2 || $__cont == 5) {
-                $__this.value += '/';
+                $__this.value += this.separator;
                 $_keyUp++;
             }
 
             if ($_keyUp == 10) {
-                let $__newDate = $__this.value.split('/');
+                let $__newDate = $__this.value.split(this.separator);
                 this.setDay($__newDate[0]);
                 this.setMonth($__newDate[1]);
                 this.setYear($__newDate[2]);
@@ -284,7 +297,7 @@ class Calendar {
             let $_Day = this.getDay();
             let $_Month = this.getMonth();
             let $_Year = this.getYear();
-            $_input.value = `${$_Day < 10 ? '0' :''}${$_Day}/${$_Month < 10 ? '0' :''}${$_Month}/${$_Year}`;
+            $_input.value = `${$_Day < 10 ? '0' :''}${$_Day}${this.separator}${$_Month < 10 ? '0' :''}${$_Month}${this.separator}${$_Year}`;
         }
 
 
@@ -311,7 +324,7 @@ class Calendar {
 
         for (let i = $t; i < $tLimit; i++) {
 
-            $_template += `<span data-year="${i}" ${$_current == i ? 'class="active"': ''}>${i}</span>`;
+            $_template += `<span ${this.available == 'today' && i < $_current ? 'disabled' : ''} data-year="${i}" ${$_current == i ? 'class="active"': ''}>${i}</span>`;
 
         }
         return $_template;
@@ -321,15 +334,15 @@ class Calendar {
         return this.range;
     }
 
-    getCalendar() {
+    getCalendar($mes) {
         let
-            $mes = this.getMonth() - 1,
             $anio = this.getYear(),
             forMes = 0,
             $t = '';
-
-        this.date.setFullYear($anio, $mes, 1);
+        this.date.setFullYear($anio,$mes,1);
         let $day = this.date.getDay();
+
+        console.log($mes, this.date.getMonth(), $day);
 
         forMes = this.getMonthDays($mes);
 
@@ -337,7 +350,7 @@ class Calendar {
             if (index == this.getDay()) {
                 $t += `<span day="${index}" ${index == 1 ? 'style="grid-column-start:'+($day+1)+'"' : ''} class="${this.prefix}-calendar-grid__btn active">${this.print(index)}</span>`;
             } else {
-                $t += `<span day="${index}" ${index == 1 ? 'style="grid-column-start:'+($day+1)+'"' : ''} class="${this.prefix}-calendar-grid__btn">${this.print(index)}</span>`;
+                $t += `<span  day="${index}" ${index == 1 ? 'style="grid-column-start:'+($day+1)+'"' : ''} class="${this.prefix}-calendar-grid__btn">${this.print(index)}</span>`;
             }
 
         }
@@ -353,12 +366,15 @@ class Calendar {
     }
 
     setDay(d) {
+        this.date.setDate(parseInt(d) > 0 ? parseInt(d) : this.date.getDate());
         this.day = parseInt(d) > 0 ? parseInt(d) : this.date.getDate();
     }
     setMonth(d) {
+        this.date.setMonth(parseInt(d) > 0 ? parseInt(d) : this.date.getMonth() + 1);
         this.month = parseInt(d) > 0 ? parseInt(d) : this.date.getMonth() + 1;
     }
     setYear(d) {
+        this.date.setFullYear(parseInt(d) > 0 ? parseInt(d) : this.date.getFullYear());
         this.year = parseInt(d) > 0 ? parseInt(d) : this.date.getFullYear();
     }
     getDay() {
@@ -383,12 +399,12 @@ class Calendar {
 
     getMonths() {
         let $_template = '';
-        let $_current = this.getMonth();
+        let $_current = this.getMonth() - 1;
         let $tLimit = this.months.length;
 
         for (let i = 0; i < $tLimit; i++) {
 
-            $_template += `<span data-month="${i+1}" ${$_current == i ? 'class="active"': ''}>${this.months[i].toLowerCase()}</span>`;
+            $_template += `<span ${this.available == 'today' && i < $_current ? 'disabled' : ''} data-month="${i+1}" ${$_current == i ? 'class="active"': ''}>${this.months[i]}</span>`;
 
         }
         return $_template;

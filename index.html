@@ -42,12 +42,15 @@
         let calendar = new Calendar({
             el: '#myCalendar',
             language: 'en',
-            name: 'calendar1'
+            name: 'calendar1',
+            separator: '/'
         });
         let calendar2 = new Calendar({
             el: '#myCalendar2',
             language: 'es',
-            name: 'calendar2'
+            name: 'calendar2',
+            available: 'today',
+            separator: '-'
         });
     </script>
 </body>

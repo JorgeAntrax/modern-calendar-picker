@@ -7,23 +7,23 @@
         align-items: center;
         position: relative;
         #{$prefix} {
-            &-input {
-                outline: none;
-                display: flex;
-                align-items: center;
-                align-content: center;
-                border: 1px solid whitesmoke;
-                background-color: whitesmoke;
-                width: 100%;
-                padding: 0.5rem 4rem 0.5rem 1rem;
-                font-size: inherit;
-                letter-spacing: 1px;
-                min-width: 300px;
-                max-width: 100%;
-                &[disabled] {
-                    pointer-events: none !important;
-                }
-            }
+            // &-input {
+            //     outline: none;
+            //     display: flex;
+            //     align-items: center;
+            //     align-content: center;
+            //     border: 1px solid whitesmoke;
+            //     background-color: whitesmoke;
+            //     width: 100%;
+            //     padding: 0.5rem 4rem 0.5rem 1rem;
+            //     font-size: inherit;
+            //     letter-spacing: 1px;
+            //     min-width: 300px;
+            //     max-width: 100%;
+            //     &[disabled] {
+            //         pointer-events: none !important;
+            //     }
+            // }
             &-icon-clear,
             &-icon-get-date-now {
                 position: absolute;
@@ -90,6 +90,7 @@
                 display: flex;
                 flex-direction: column;
                 width: 100%;
+                min-width: 350px;
                 max-width: $maxW;
                 background-color: white;
                 border-radius: 0;
@@ -214,6 +215,7 @@
                     align-items: center;
                     justify-items: center;
                     max-height: 250px;
+                    text-transform: uppercase;
                     span {
                         display: flex;
                         align-items: center;
@@ -228,6 +230,11 @@
                         }
                         &:not(.active):hover {
                             background-color: whitesmoke;
+                        }
+                        &[disabled] {
+                            user-select: none;
+                            cursor: not-allowed;
+                            background-color: darken(whitesmoke, 2%);
                         }
                     }
                 }
@@ -244,6 +251,11 @@
                     &.active {
                         background-color: $primary;
                         color: white;
+                    }
+                    &[disabled] {
+                        user-select: none;
+                        cursor: not-allowed;
+                        background-color: darken(whitesmoke, 2%);
                     }
                     &:not(.active):hover {
                         background-color: whitesmoke;
@@ -266,11 +278,13 @@
                     justify-content: center;
                     flex: 1;
                     &[save] {
+                        display:none !important;
                         &:hover {
                             color: $primary;
                         }
                     }
                     &[cancel] {
+                        display:none !important;
                         &:hover {
                             color: #ff0050;
                         }
