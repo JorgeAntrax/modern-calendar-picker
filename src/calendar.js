@@ -1,6 +1,6 @@
 'use strict';
 class Calendar {
-    constructor({ el, language = 'es', name, prefix = 'mcp', date = null, rangeYears = 30, available = 'all', separator = '/', styleInput = '', call = null }) {
+    constructor({ el, language = 'es', name = "", prefix = 'mcp', date = null, rangeYears = 30, available = 'all', separator = '/', styleInput = '', props = '', call = null }) {
         this.el = document.querySelector(el);
         this.that = el.split('#').join('');
         this.language = language;
@@ -10,11 +10,15 @@ class Calendar {
         this.inputClasses = styleInput;
         this.days = '';
         this.call = call;
+        this.props = props;
         this.separator = separator;
         this.available = available;
+        this.inputElement = null;
         this.date = new Date();
         this.initDate = date != null || date != undefined ? date.split('/') : null;
         this.calendarGrid = null;
+        this.returnDate = '';
+        this.keyCodes = [8, 46, 40, 38, 39, 37, 27, 32, 189, 13];
 
         this.iconToggle = `${this.prefix}-${this.that}-dateNow`;
         this.iconClear = `${this.prefix}-${this.that}-clear`;
@@ -59,9 +63,9 @@ class Calendar {
 				<span class="${this.prefix}-icon-clear hide" id="${this.iconClear}">
 					<span></span>
 				</span>
-				<input maxlength="10" type='text' class="${this.prefix}-input ${this.inputClasses}" id="${input}" placeholder='${this.getDay() < 10 ? '0'+this.getDay() : this.getDay()}${this.separator}${this.getMonth() < 10 ? '0'+this.getMonth() : this.getMonth()}${this.separator}${this.getYear()}'/>
+                <input name="${this.name}" ${this.props} maxlength="10" type='text' class="${this.prefix}-input ${this.inputClasses}" id="${input}" placeholder='${this.getDay() < 10 ? '0'+this.getDay() : this.getDay()}${this.separator}${this.getMonth() < 10 ? '0'+this.getMonth() : this.getMonth()}${this.separator}${this.getYear()}'/>
 				<span id="${this.iconToggle}" class="${this.prefix}-icon-get-date-now">
-					<span></span>
+                    <span></span>
 				</span>
 				<div class="${this.prefix}-calendar">
 					<div class="${this.prefix}-calendar-header">
@@ -93,7 +97,7 @@ class Calendar {
         replace(/\{\{day\}\}/g, this.getDay() < 10 ? `0${this.getDay()}` : this.getDay()).
         replace(/\{\{calendar-years\}\}/g, this.getYears()).
         replace(/\{\{calendar-months\}\}/g, this.getMonths()).
-        replace(/\{\{calendar-grid\}\}/g, this.getCalendar(this.getMonth()-1)).
+        replace(/\{\{calendar-grid\}\}/g, this.getCalendar(this.getMonth() - 1)).
         replace('\t', '').
         replace('\n', '');
 
@@ -104,38 +108,110 @@ class Calendar {
         let $__top = $__viewYear.offsetTop;
         $__viewYear.parentElement.scrollTop = $__top - 100;
 
+        this.inputElement = this.el.querySelector(`#${input}`);
+
+        this.watchSlide(parent);
+
         this.watchCalendar(parent, input, callback);
         this.watchMonth(parent, input);
         this.watchYear(parent, input);
         this.watchToggleView(this.toggleView, parent);
         this.watchClear(this.iconClear, parent, input);
-        this.watchToggle(id, parent);
+        this.watchToggle(id, parent, input);
         this.watchInput(input, parent, this.iconClear);
         this.updateInput(id);
     }
 
+    watchSlide($el) {
+        $el = $el.querySelector(`.${this.prefix}-calendar-grid`);
+
+        let
+            x = 0,
+            y = 0,
+            direction = '',
+            slideX = 0,
+            cont = 0,
+            tItems = 0;
+
+        $el.addEventListener('touchstart', e => {
+            console.log(e);
+            let $t = e.targetTouches;
+            if ($t.length == 1) {
+                let touch = $t[0];
+                x = touch.pageX;
+                y = touch.pageY;
+            }
+            console.log(e, $t.length, x, y);
+        });
+        $el.addEventListener('touchmove', e => {
+            let $t = e.targetTouches;
+            if ($t.length == 1) {
+                let touch = $t[0];
+
+                if (touch.pageX < (x - 50) && (touch.pageY > y - 5) && (touch.pageY < y + 5)) {
+                    direction = 'left';
+                    slideX = touch.pageX;
+                }
+                if (touch.pageX > (x + 50) && (touch.pageY > y - 5) && (touch.pageY < y + 5)) {
+                    direction = 'right';
+                    slideX = touch.pageX;
+                }
+            }
+        });
+        $el.addEventListener('touchend', e => {
+
+            if (slideX != 0 && slideX != undefined && slideX < (x - 50) && direction == 'left') {
+                // console.log(cont, items);
+                if (cont < 2) {
+                    cont += 1;
+                    // console.log(cont);
+                    $el.style.marginLeft = `${-(cont * 100)}%`;
+                } else {
+                    // console.log("dsadasda");
+                    $el.style.marginLeft = '0';
+                    cont = 0;
+                }
+
+                slideX = 0;
+            }
+
+            if (slideX != 0 && slideX != undefined && slideX > (x + 50) && direction == 'right') {
+                //console.log('slide right');
+                if (cont > 0) {
+                    cont -= 1;
+                    $el.style.marginLeft = `${-(cont * 100)}%`;
+                } else {
+                    cont = 2;
+                    $el.style.marginLeft = `${-(cont * 100)}%`;
+                }
+
+                slideX = 0;
+            }
+            this.slideView(['viewMonths', 'viewYear', 'viewMonth'], 'other', $el);
+
+        });
+    }
+
     watchMonth(parent, id) {
-        let $__months = parent.querySelectorAll('[data-month]:not([disabled])');
         let $__label = parent.querySelector('.toggleMonth');
         let $__replace = parent.querySelector(`.${this.prefix}-calendar-grid__view-month`);
 
-            parent.addEventListener('click', e => {
-                e.stopPropagation();
-                let $that = e.target;
+        parent.addEventListener('click', e => {
+            let $__months = parent.querySelectorAll('[data-month]:not([disabled])');
+            e.stopPropagation();
+            let $that = e.target;
 
-                if(e.target.hasAttribute('data-month')) {
-                    this.removeClassSiblings($__months, $__months.length);
-                    $that.classList.add('active');
-                    this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
-                    $that.parentElement.parentNode.classList.add('viewMonth');
-                    this.setMonth($that.getAttribute('data-month'));
-                    $__label.innerHTML = this.months[this.getMonth() - 1];
-    
-                    $__replace.innerHTML = this.getCalendar($that.getAttribute('data-month')-1);
-    
-                    this.updateInput(id);
-                }
-            }, false);
+            if (e.target.hasAttribute('data-month')) {
+                this.removeClassSiblings($__months, $__months.length);
+                $that.classList.add('active');
+                this.setMonth($that.getAttribute('data-month'));
+                $__label.innerHTML = this.months[this.getMonth() - 1];
+
+                $__replace.innerHTML = this.getCalendar($that.getAttribute('data-month') - 1);
+                this.updateInput(id);
+                this.slideView(['viewMonths', 'viewYear'], 'viewMonth', $that.parentElement.parentNode);
+            }
+        }, false);
     }
 
     watchYear(parent, id) {
@@ -146,42 +222,41 @@ class Calendar {
         parent.addEventListener('click', e => {
             e.stopPropagation();
             let $that = e.target;
-            if(e.target.hasAttribute('data-year')) {
+            if (e.target.hasAttribute('data-year')) {
                 this.removeClassSiblings($__years, $__years.length);
-    
+
                 $that.classList.add('active');
-                this.removeClass(['viewMonths', 'viewYear'], $that.parentElement.parentNode);
-                $that.parentElement.parentNode.classList.add('viewMonth');
                 this.setYear($that.getAttribute('data-year'));
                 $__label.innerHTML = this.getYear();
                 this.updateInput(id);
-                $__replace.innerHTML = this.getCalendar(this.getMonth()-1);
+                $__replace.innerHTML = this.getCalendar(this.getMonth() - 1);
+                this.slideView(['viewMonths', 'viewYear'], 'viewMonth', $that.parentElement.parentNode);
             }
         }, false);
     }
 
     watchCalendar(parent, input, callback) {
-        let $_days = parent.querySelectorAll(`.${this.prefix}-calendar-grid__btn:not([disabled])`);
         let $__label = parent.querySelector('.toggleDay');
-        let $_in = $_days.length;
 
         parent.addEventListener('click', e => {
+            let $_days = parent.querySelectorAll(`.${this.prefix}-calendar-grid__btn:not([disabled])`);
+            let $_in = $_days.length;
             e.stopPropagation();
             const $__btn = e.target;
 
-            if(e.target.hasAttribute('day')) {
+            if (e.target.hasAttribute('day')) {
                 const $__currentDay = $__btn.getAttribute('day');
                 this.setDay($__currentDay);
-                this.updateInput(input);
-    
-                this.removeClassSiblings($_days, $_in);
-                $__label.innerHTML = this.getDay()-1 < 10 ? `0${this.getDay()-1}` : this.getDay()-1;
-    
-                $__btn.classList.add('active');
+                this.updateInput(input, callback);
 
-                if(callback !== null) {
-                    callback.call(this);
-                }
+                // console.log($_days, $_in);
+
+                this.removeClassSiblings($_days, $_in);
+                $__label.innerHTML = this.getDay() < 10 ? `0${this.getDay()}` : this.getDay();
+
+                $__btn.classList.add('active');
+                parent.querySelector(`.${this.prefix}-calendar`).classList.remove(`${this.prefix}-show`);
+
             }
         }, false);
     }
@@ -191,30 +266,30 @@ class Calendar {
         let $__viewContainer = parent.querySelector(`.${this.prefix}-calendar-grid`);
 
         $__view.addEventListener('click', e => {
+            $__viewContainer.removeAttribute('style');
             e.stopPropagation();
             const $_that = e.target;
 
-
             if ($_that.classList.contains('toggleMonth')) {
-                this.removeClass(['viewMonth', 'viewYear'], $__viewContainer);
-                $__viewContainer.classList.add('viewMonths');
+                this.slideView(['viewMonth', 'viewYear'], 'viewMonths', $__viewContainer);
             } else if ($_that.classList.contains('toggleDay')) {
-                this.removeClass(['viewMonths', 'viewYear'], $__viewContainer);
-                $__viewContainer.classList.add('viewMonth');
+                this.slideView(['viewMonths', 'viewYear'], 'viewMonth', $__viewContainer);
             } else {
-                this.removeClass(['viewMonths', 'viewMonth'], $__viewContainer);
-                $__viewContainer.classList.add('viewYear');
+                this.slideView(['viewMonths', 'viewMonth'], 'viewYear', $__viewContainer);
             }
 
         }, false);
     }
 
+    slideView($removes, $active, $container) {
+        this.removeClass($removes, $container);
+        $container.classList.add($active);
+    }
+
     removeClassSiblings($siblings, $in) {
         for (let $i = 0; $i < $in; $i++) {
             let el = $siblings[$i];
-            if (el.classList.contains('active')) {
-                el.classList.remove('active');
-            }
+            el.classList.remove('active');
         }
     }
 
@@ -232,16 +307,37 @@ class Calendar {
         }, false);
     }
 
-    watchToggle(id, parent) {
+    watchToggle(id, parent, input) {
         const $toggle = parent.querySelector(`#${id}`);
-        console.log($toggle);
+
+        // parent.addEventListener('focus', function(e) {
+        //         const $this = e.target;
+
+        //     console.log($this);
+        //     if (e.target.classList.contains(`${this.prefix}-input`)) {
+        //         $this.nextElementSibling.classList.toggle(`${this.prefix}-show`);
+        //     }
+
+        //     if ($this.classList.contains(`${this.prefix}-icon-get-date-now`)) {
+        //         $this.nextElementSibling.classList.toggle(`${this.prefix}-show`);
+        //     }
+
+        // }, false);
 
         $toggle.addEventListener('click', e => {
             e.stopPropagation();
             $toggle.nextElementSibling.classList.toggle(`${this.prefix}-show`);
 
-            this.destroy($toggle);
+            // this.destroy($toggle);
         }, false);
+
+        // console.log(input);
+
+        // parent.querySelector(`#${input}`).addEventListener('focus', e => {
+        //     // e.stopPropagation();
+        //     e.target.nextElementSibling.nextElementSibling.classList.toggle(`${this.prefix}-show`);
+        //     // this.destroy(input);
+        // }, false);
         // $toggle.addEventListener('blur', e => {
         //     $toggle.nextElementSibling.classList.remove(`${this.prefix}-show`);
         // }, false);
@@ -259,21 +355,21 @@ class Calendar {
     watchInput(id, parent, clear) {
         const $input = parent.querySelector(`#${id}`);
         let $_keyUp = 0;
+        let $__cont = 0;
         $input.addEventListener('keyup', e => {
+            $_keyUp++;
             let $__this = e.target;
             let $__val = $__this.value;
-            let $__cont = $__val.length;
 
-            $_keyUp++;
+            if ($__cont == 1 || $__cont == 4) {
+                $__this.value += this.separator;
+                $_keyUp++;
+            }
 
             if ($_keyUp == 1) {
                 parent.querySelector(`#${clear}`).classList.remove('hide');
             }
 
-            if ($__cont == 2 || $__cont == 5) {
-                $__this.value += this.separator;
-                $_keyUp++;
-            }
 
             if ($_keyUp == 10) {
                 let $__newDate = $__this.value.split(this.separator);
@@ -282,25 +378,40 @@ class Calendar {
                 this.setYear($__newDate[2]);
                 $_keyUp = 0;
             }
+            $__cont++;
+
         }, false);
         // $toggle.addEventListener('blur', e => {
         //     $toggle.nextElementSibling.classList.remove(`${this.prefix}-show`);
         // }, false);
     }
 
+    updateDate($val) {
+        this.returnDate = $val;
+    }
+
+    getVal() {
+        return this.returnDate;
+    }
+
     updateInput(id) {
+        const callback = arguments[1] || null;
         const $_input = document.querySelector(`#${id}`);
 
         if (this.getDay() == 1 && this.getMonth() == 1 && this.getYear() == 1) {
             $_input.value = '';
+            this.updateDate($_input.value);
         } else {
             let $_Day = this.getDay();
             let $_Month = this.getMonth();
             let $_Year = this.getYear();
             $_input.value = `${$_Day < 10 ? '0' :''}${$_Day}${this.separator}${$_Month < 10 ? '0' :''}${$_Month}${this.separator}${$_Year}`;
+            this.updateDate($_input.value);
         }
-
-
+        // console.log(callback);
+        if (callback !== null) {
+            callback.call(this);
+        }
     }
 
     getDays() {
@@ -339,7 +450,7 @@ class Calendar {
             $anio = this.getYear(),
             forMes = 0,
             $t = '';
-        this.date.setFullYear($anio,$mes,1);
+        this.date.setFullYear($anio, $mes, 1);
         let $day = this.date.getDay();
 
         console.log($mes, this.date.getMonth(), $day);
