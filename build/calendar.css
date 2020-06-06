@@ -1,1 +1,520 @@
-calendar-picker{display:inline-flex;align-items:center;position:relative}calendar-picker .mcp-icon-clear,calendar-picker .mcp-icon-get-date-now{position:absolute;right:0;top:50%;transform:translateY(-50%);min-width:35px;min-height:35px;display:flex;align-items:center;justify-content:center;cursor:pointer}calendar-picker .mcp-icon-clear{right:35px}calendar-picker .mcp-icon-clear.hide{pointer-events:none;display:none}calendar-picker .mcp-icon-clear span,calendar-picker .mcp-icon-clear span::before{width:16px;display:block;height:1px;position:relative;background-color:#000;transform:rotate(45deg);transform-origin:center;transition:all .2s ease}calendar-picker .mcp-icon-clear span::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%, -50%) rotate(-90deg);margin-bottom:1px}calendar-picker .mcp-icon-clear:hover span,calendar-picker .mcp-icon-clear:hover span::before,calendar-picker .mcp-icon-clear:hover span::before{background-color:#ff0050}calendar-picker .mcp-icon-get-date-now span,calendar-picker .mcp-icon-get-date-now .mcp-icon-clear span::before,calendar-picker .mcp-icon-clear .mcp-icon-get-date-now span::before{min-width:10px;min-height:10px;transform:rotate(45deg);border:1px solid #000;border-left-color:transparent;border-top-color:transparent;transition:border-color .2s ease;margin-top:-0.4rem}calendar-picker .mcp-icon-get-date-now:hover span,calendar-picker .mcp-icon-get-date-now:hover .mcp-icon-clear span::before,calendar-picker .mcp-icon-clear .mcp-icon-get-date-now:hover span::before{border-bottom-color:#276ad4;border-right-color:#276ad4}calendar-picker .mcp-calendar{display:flex;flex-direction:column;width:100%;min-width:350px;max-width:400px;background-color:white;border-radius:0;box-shadow:0 10px 50px -10px rgba(0,0,0,0.3);overflow:hidden;position:absolute;top:100%;left:0;z-index:5;user-select:none;max-height:0;transition:max-height .2s ease-out}calendar-picker .mcp-show{max-height:500vh}calendar-picker .mcp-calendar-header{display:flex;align-items:center;align-content:center;justify-content:space-between;padding:1rem}calendar-picker .mcp-calendar-header strong{display:flex;width:60%}calendar-picker .mcp-calendar-header strong span,calendar-picker .mcp-calendar-header strong .mcp-icon-clear span::before,calendar-picker .mcp-icon-clear .mcp-calendar-header strong span::before{cursor:pointer;padding:0.25rem 0.5rem;border-radius:2px;transition:background-color .2s ease;text-transform:uppercase;text-align:center;flex:1}calendar-picker .mcp-calendar-header strong span.active,calendar-picker .mcp-calendar-header strong .mcp-icon-clear span.active::before,calendar-picker .mcp-icon-clear .mcp-calendar-header strong span.active::before,calendar-picker .mcp-calendar-header strong span:hover,calendar-picker .mcp-calendar-header strong .mcp-icon-clear span:hover::before,calendar-picker .mcp-icon-clear .mcp-calendar-header strong span:hover::before{color:#276ad4}calendar-picker .mcp-calendar-header .previus,calendar-picker .mcp-calendar-header .next{position:relative;width:1.5rem;height:1.5rem;cursor:pointer}calendar-picker .mcp-calendar-header .previus:before,calendar-picker .mcp-calendar-header .next:before{content:'';display:block;width:40%;height:40%;position:absolute;top:50%;left:50%;border:1px solid #555;transform:translate(-50%, -50%) rotate(45deg);transition:border .2s ease;cursor:pointer}calendar-picker .mcp-calendar-header .previus:hover::before,calendar-picker .mcp-calendar-header .next:hover::before{border-color:#276ad4}calendar-picker .mcp-calendar-header .next:before{border-left:0;border-bottom:0}calendar-picker .mcp-calendar-header .previus:before{border-right:0;border-top:0}calendar-picker .mcp-calendar-days{padding:0 1rem}calendar-picker .mcp-calendar-days{display:grid;grid-template-columns:repeat(7, 1fr)}calendar-picker .mcp-calendar-days span,calendar-picker .mcp-calendar-days .mcp-icon-clear span::before,calendar-picker .mcp-icon-clear .mcp-calendar-days span::before{display:flex;align-items:center;justify-content:center;padding:0.25rem 0;opacity:0.5;font-size:85%;text-transform:uppercase}calendar-picker .mcp-calendar-grid{display:flex;min-width:300%;position:relative;transition:margin-left .2s ease-out}calendar-picker .mcp-calendar-grid.viewMonth{margin-left:-100%}calendar-picker .mcp-calendar-grid.viewMonths{margin-left:0%}calendar-picker .mcp-calendar-grid.viewYear{margin-left:-200%}calendar-picker .mcp-calendar-grid .viewCalendar{width:100%;max-width:100%;padding:0 1rem}calendar-picker .mcp-calendar-grid__view-month,calendar-picker .mcp-calendar-grid__view-months,calendar-picker .mcp-calendar-grid__view-years{display:grid;width:100%;grid-template-columns:repeat(7, 1fr);grid-template-rows:repeat(5, 50px);align-items:center;justify-items:center}calendar-picker .mcp-calendar-grid__view-years,calendar-picker .mcp-calendar-grid__view-months{grid-template-columns:repeat(4, 1fr);grid-auto-rows:50px;overflow-y:auto;align-items:center;justify-items:center;max-height:250px;text-transform:uppercase}calendar-picker .mcp-calendar-grid__view-years span,calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span::before,calendar-picker .mcp-calendar-grid__view-months span,calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span::before{display:flex;align-items:center;justify-content:center;padding:0.25rem 1rem;border-radius:2rem;cursor:pointer;transition:all .2s ease}calendar-picker .mcp-calendar-grid__view-years span.active,calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span.active::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span.active::before,calendar-picker .mcp-calendar-grid__view-months span.active,calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span.active::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span.active::before{background-color:#276ad4;color:white}calendar-picker .mcp-calendar-grid__view-years span:not(.active):hover,calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span:not(.active):hover::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span:not(.active):hover::before,calendar-picker .mcp-calendar-grid__view-months span:not(.active):hover,calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span:not(.active):hover::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span:not(.active):hover::before{background-color:whitesmoke}calendar-picker .mcp-calendar-grid__view-years span[disabled],calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span[disabled]::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span[disabled]::before,calendar-picker .mcp-calendar-grid__view-months span[disabled],calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span[disabled]::before,calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span[disabled]::before{user-select:none;cursor:not-allowed;background-color:#f0f0f0}calendar-picker .mcp-calendar-grid__btn{display:flex;align-items:center;align-content:center;justify-content:center;border-radius:100%;width:2rem;height:2rem;cursor:pointer;transition:all .2s ease}calendar-picker .mcp-calendar-grid__btn.active{background-color:#276ad4;color:white}calendar-picker .mcp-calendar-grid__btn[disabled]{user-select:none;cursor:not-allowed;background-color:#f0f0f0}calendar-picker .mcp-calendar-grid__btn:not(.active):hover{background-color:whitesmoke}calendar-picker .mcp-calendar-actions{display:flex;align-items:center;padding:0 1rem}calendar-picker .mcp-calendar-actions button{outline:none;border:none;display:flex;padding:1rem;background-color:white;border-radius:2px;text-transform:uppercase;text-align:center;justify-content:center;flex:1}calendar-picker .mcp-calendar-actions button[save]{display:none !important}calendar-picker .mcp-calendar-actions button[save]:hover{color:#276ad4}calendar-picker .mcp-calendar-actions button[cancel]{display:none !important}calendar-picker .mcp-calendar-actions button[cancel]:hover{color:#ff0050}
+calendar-picker {
+    display: block;
+    position: relative;
+    /* z-index: 1; */
+    width: 100%;
+    font-family: sans-serif;
+}
+
+calendar-picker .mcp-input {
+    padding-right: 70px;
+}
+
+calendar-picker .mcp-icon-clear,
+calendar-picker .mcp-icon-get-date-now {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    min-width: 35px;
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    cursor: pointer
+}
+
+calendar-picker .mcp-icon-clear *,
+calendar-picker .mcp-icon-get-date-now * {
+    pointer-events: none
+}
+
+calendar-picker .mcp-icon-clear {
+    right: 35px
+}
+
+calendar-picker .mcp-icon-clear.hide {
+    pointer-events: none;
+    display: none
+}
+
+calendar-picker .mcp-icon-clear span,
+calendar-picker .mcp-icon-clear span::before {
+    width: 16px;
+    display: block;
+    height: 1px;
+    position: relative;
+    background-color: #000;
+    transform: rotate(45deg);
+    transform-origin: center;
+    transition: all .2s ease
+}
+
+calendar-picker .mcp-icon-clear span::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    margin-bottom: 1px
+}
+
+calendar-picker .mcp-icon-clear:hover span,
+calendar-picker .mcp-icon-clear:hover span::before {
+    background-color: #ff0050
+}
+
+calendar-picker .mcp-icon-clear .mcp-icon-get-date-now span::before,
+calendar-picker .mcp-icon-get-date-now .mcp-icon-clear span::before,
+calendar-picker .mcp-icon-get-date-now span {
+    min-width: 10px;
+    min-height: 10px;
+    transform: rotate(45deg);
+    border: 1px solid #000;
+    border-left-color: transparent;
+    border-top-color: transparent;
+    transition: border-color .2s ease;
+    margin-top: -.4rem;
+}
+
+calendar-picker .mcp-icon-clear .mcp-icon-get-date-now:hover span::before,
+calendar-picker .mcp-icon-get-date-now:hover .mcp-icon-clear span::before,
+calendar-picker .mcp-icon-get-date-now:hover span {
+    border-bottom-color: #276ad4;
+    border-right-color: #276ad4
+}
+
+calendar-picker .mcp-calendar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 350px;
+    max-width: 400px;
+    background-color: #fff;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    user-select: none;
+    max-height: 0;
+    transition: max-height .2s ease-out;
+    border-radius: 0 0 10px 10px;
+    pointer-events: none;
+    z-index: 999999;
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .3);
+    transform-origin: center center;
+}
+
+@media screen and (min-width: 500px) {
+    calendar-picker .mcp-calendar {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media screen and (min-width: 980px) {
+    calendar-picker .mcp-calendar {
+        top: 3rem;
+        border-radius: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+calendar-picker #mcp-close-calendar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 888888;
+    pointer-events: none;
+}
+
+calendar-picker #mcp-close-calendar-overlay.ok {
+    background-color: rgba(0, 0, 0, .5);
+    pointer-events: all;
+}
+
+calendar-picker.top .mcp-calendar {
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, .1);
+    top: 100%;
+}
+
+@media screen and (max-width:500px) {
+    calendar-picker .mcp-calendar {
+        max-width: 100%
+    }
+}
+
+calendar-picker.bottom .mcp-calendar {
+    box-shadow: 0 -15px 30px -5px rgba(0, 0, 0, .1);
+    bottom: 100%
+}
+
+calendar-picker .mcp-show {
+    pointer-events: all;
+    max-height: 500vh;
+}
+
+calendar-picker .mcp-calendar-header {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: space-between;
+    padding: 1rem
+}
+
+calendar-picker .mcp-calendar-header strong {
+    display: flex;
+    width: 60%;
+    font-size: 1.5rem;
+}
+
+calendar-picker .mcp-calendar-header strong .mcp-icon-clear span::before,
+calendar-picker .mcp-calendar-header strong span,
+calendar-picker .mcp-icon-clear .mcp-calendar-header strong span::before {
+    cursor: pointer;
+    padding: .25rem .5rem;
+    border-radius: 2px;
+    transition: background-color .2s ease;
+    text-transform: uppercase;
+    text-align: center;
+    flex: 1
+}
+
+calendar-picker .mcp-calendar-header strong .mcp-icon-clear span.active::before,
+calendar-picker .mcp-calendar-header strong .mcp-icon-clear span:hover::before,
+calendar-picker .mcp-calendar-header strong span.active,
+calendar-picker .mcp-calendar-header strong span:hover,
+calendar-picker .mcp-icon-clear .mcp-calendar-header strong span.active::before,
+calendar-picker .mcp-icon-clear .mcp-calendar-header strong span:hover::before {
+    color: #276ad4
+}
+
+calendar-picker .mcp-calendar-header .next,
+calendar-picker .mcp-calendar-header .previus {
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    pointer-events: none;
+    opacity: 0
+}
+
+calendar-picker .mcp-calendar-header .next:before,
+calendar-picker .mcp-calendar-header .previus:before {
+    content: '';
+    display: block;
+    width: 40%;
+    height: 40%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 1px solid #555;
+    transform: translate(-50%, -50%) rotate(45deg);
+    transition: border .2s ease;
+    cursor: pointer
+}
+
+calendar-picker .mcp-calendar-header .next:hover::before,
+calendar-picker .mcp-calendar-header .previus:hover::before {
+    border-color: #276ad4
+}
+
+calendar-picker .mcp-calendar-header .next:before {
+    border-left: 0;
+    border-bottom: 0
+}
+
+calendar-picker .mcp-calendar-header .previus:before {
+    border-right: 0;
+    border-top: 0
+}
+
+calendar-picker .mcp-calendar-days {
+    padding: 0.25rem 1rem
+}
+
+calendar-picker .mcp-calendar-timely {
+    padding: 1rem 2rem;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+calendar-picker .mcp-select-timely-format-controls {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+calendar-picker .mcp-select-timely-format {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    background-color: var(--primary);
+    transition: all .25s ease-in;
+}
+
+calendar-picker .mcp-select-timely-format.active {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+calendar-picker .mcp-hour-control {
+    position: relative;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    width: 1rem;
+    cursor: pointer;
+    transition: border-color .2s ease;
+}
+
+calendar-picker .mcp-hour-control:hover::before {
+    border-color: #276ad4;
+}
+
+calendar-picker .mcp-hour-control:before {
+    content: '';
+    display: inline-block;
+    min-width: 10px;
+    min-height: 10px;
+    border: 1px solid #ccc;
+    transform-origin: center;
+    transform: rotate(45deg);
+}
+
+calendar-picker .mcp-hour-control.minux:before {
+    border-top: 0;
+    border-right: 0;
+}
+
+calendar-picker .mcp-hour-control.max:before {
+    border-bottom: 0;
+    border-left: 0;
+}
+
+calendar-picker .mcp-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr)
+}
+
+calendar-picker .mcp-calendar-days .mcp-icon-clear span::before,
+calendar-picker .mcp-calendar-days span,
+calendar-picker .mcp-icon-clear .mcp-calendar-days span::before {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .25rem 0;
+    opacity: .5;
+    font-size: 85%;
+    text-transform: uppercase
+}
+
+calendar-picker .mcp-calendar-grid {
+    display: flex;
+    min-width: 300%;
+    position: relative;
+    transition: margin-left .25s cubic-bezier(.17, .67, .68, .84)
+}
+
+calendar-picker .mcp-calendar-grid.viewMonth {
+    margin-left: -100%
+}
+
+calendar-picker .mcp-calendar-grid.viewMonths {
+    margin-left: 0
+}
+
+calendar-picker .mcp-calendar-grid.viewYear {
+    margin-left: -200%
+}
+
+calendar-picker .mcp-calendar-grid .viewCalendar {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1rem
+}
+
+calendar-picker .mcp-calendar-grid__view-month,
+calendar-picker .mcp-calendar-grid__view-months,
+calendar-picker .mcp-calendar-grid__view-years {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(5, 50px);
+    grid-auto-rows: 50px;
+    align-items: center;
+    justify-items: center
+}
+
+calendar-picker .mcp-calendar-grid__view-months,
+calendar-picker .mcp-calendar-grid__view-years {
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 50px;
+    overflow-y: auto;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: center;
+    max-height: 250px;
+    text-transform: uppercase
+}
+
+calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span::before,
+calendar-picker .mcp-calendar-grid__view-months span,
+calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span::before,
+calendar-picker .mcp-calendar-grid__view-years span,
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span::before,
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span::before {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    padding: .5rem 1rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    transition: all .2s ease
+}
+
+calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span.active::before,
+calendar-picker .mcp-calendar-grid__view-months span.active,
+calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span.active::before,
+calendar-picker .mcp-calendar-grid__view-years span.active,
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span.active::before,
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span.active::before {
+    background-color: #276ad4;
+    color: #fff
+}
+
+calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span:not(.active):hover::before,
+calendar-picker .mcp-calendar-grid__view-months span:not(.active):hover,
+calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span:not(.active):hover::before,
+calendar-picker .mcp-calendar-grid__view-years span:not(.active):hover,
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span:not(.active):hover::before,
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span:not(.active):hover::before {
+    background-color: #f5f5f5
+}
+
+calendar-picker .mcp-calendar-grid__view-months .mcp-icon-clear span[disabled]::before,
+calendar-picker .mcp-calendar-grid__view-months span[disabled],
+calendar-picker .mcp-calendar-grid__view-years .mcp-icon-clear span[disabled]::before,
+calendar-picker .mcp-calendar-grid__view-years span[disabled],
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-months span[disabled]::before,
+calendar-picker .mcp-icon-clear .mcp-calendar-grid__view-years span[disabled]::before {
+    user-select: none;
+    cursor: not-allowed;
+    background-color: #f0f0f0
+}
+
+calendar-picker .mcp-calendar-grid__btn {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border-radius: 100%;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    cursor: pointer;
+    position: relative;
+    transition: all .2s ease
+}
+
+calendar-picker .mcp-calendar-grid__btn.start:after,
+calendar-picker .mcp-calendar-grid__btn.end:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    background-color: rgba(0, 100, 255, 0.2);
+    z-index: -1;
+}
+
+calendar-picker .mcp-calendar-grid__btn.active {
+    background-color: #276ad4;
+    color: #fff
+}
+
+calendar-picker .mcp-calendar-grid__btn[disabled] {
+    user-select: none;
+    cursor: not-allowed;
+    background-color: #f0f0f0
+}
+
+calendar-picker[type="range"] .mcp-calendar-grid__btn.st {
+    border-radius: 0 2rem 2rem 0 !important;
+}
+
+calendar-picker[type="range"] .mcp-calendar-grid__btn.sd {
+    border-radius: 2rem 0 0 2rem !important;
+}
+
+calendar-picker .mcp-calendar-grid__btn:not(.active):not(.holder):hover {
+    background-color: #f5f5f5;
+}
+
+calendar-picker .mcp-calendar-grid__btn.holder {
+    border-radius: 0px !important;
+}
+
+calendar-picker .mcp-calendar-grid__btn.holder,
+calendar-picker .mcp-calendar-grid__btn.active.start:after,
+calendar-picker .mcp-calendar-grid__btn.active.end:after {
+    background-color: rgba(0, 100, 255, 0.2);
+}
+
+calendar-picker .mcp-calendar-grid__btn.start:after {
+    right: 0;
+}
+
+calendar-picker .mcp-calendar-grid__btn.end:after {
+    left: 0;
+}
+
+calendar-picker .mcp-calendar-actions {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    background-color: #f8f8f8;
+}
+
+calendar-picker .mcp-calendar-actions .act_button {
+    outline: 0;
+    border: none !important;
+    display: flex;
+    padding: 1rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    justify-content: center;
+    flex: 1;
+    height: auto !important;
+    cursor: pointer;
+}
+
+calendar-picker .mcp-calendar-actions .act_button[save]:hover {
+    color: #276ad4;
+}
+
+calendar-picker .mcp-calendar-actions .act_button[cancel] {
+    color: #ff0050;
+}
+
+@media screen and (max-width: 980px) {
+    calendar-picker [minutes],
+    calendar-picker [hours] {
+        width: 2.25rem;
+        height: 40px;
+    }
+}
